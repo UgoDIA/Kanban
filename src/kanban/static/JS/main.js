@@ -1,19 +1,34 @@
+buildKanban()
+function buildKanban(){
+  
 var KanbanTest = new jKanban({
     element: "#myKanban",
     gutter: "10px",
-    widthBoard: "450px",
-    itemHandleOptions:{
-      enabled: true,
-    },
+    widthBoard: "350px",
+
     click: function(el) {
       console.log("Trigger on all items click!");
     },
     context: function(el, e) {
       console.log("Trigger on all items right-click!");
     },
+    dragBoard: function(el, source){
+      console.log("Drag Board:")
+      console.log(el.getAttribute('data-id'),"position:",el.getAttribute('data-order'))
+    },
+    dragendBoard: function(el, target, source, sibling){
+      console.log("Drop Board:")
+      console.log(el.getAttribute('data-id'),"position:",el.getAttribute('data-order'))
+    },
     dropEl: function(el, target, source, sibling){
-      console.log(target.parentElement.getAttribute('data-id'));
-      console.log(el, target, source, sibling)
+      console.log("drop",el.getAttribute('data-titre'));
+      console.log(target.parentElement.getAttribute('data-id'),"colonne:",target.parentElement.getAttribute('data-order'))
+      // console.log(el, target, source, sibling)
+    },
+    dragEl: function(el, target, source, sibling){
+      console.log("drag",el.getAttribute('data-titre'));
+      console.log(target.parentElement.getAttribute('data-id'),"colonne:",target.parentElement.getAttribute('data-order'))
+      
     },
     buttonClick: function(el, boardId) {
       console.log(el);
@@ -39,118 +54,81 @@ var KanbanTest = new jKanban({
     },
     itemAddOptions: {
       enabled: true,
-      content: '+ Add New Card',
+      content: '+ Ajouter une tâche',
       class: 'custom-button',
       footer: true
     },
-    boards: [
-      {
-        id: "_todo",
-        title: "To Do (Can drop item only in working)",
-        class: "info,good",
-        dragTo: ["_working"],
-        item: [
-          {
-            id: "_test_delete",
-            title: "Try drag this (Look the console)",
-            drag: function(el, source) {
-              console.log("START DRAG: " + el.dataset.eid);
-            },
-            dragend: function(el) {
-              console.log("END DRAG: " + el.dataset.eid);
-            },
-            drop: function(el) {
-              console.log("DROPPED: " + el.dataset.eid);
-            }
-          },
-          {
-            title: "Try Click This!",
-            click: function(el) {
-              alert("click");
-            },
-            context: function(el, e){
-              alert("right-click at (" + `${e.pageX}` + "," + `${e.pageX}` + ")")
-            },
-            class: ["peppe", "bello"]
-          }
-        ]
-      },
-      {
-        id: "_working",
-        title: "Working (Try drag me too)",
-        class: "warning",
-        item: [
-          {
-            title: "Do Something!"
-          },
-          {
-            title: "Run?"
-          }
-        ]
-      },
-      {
-        id: "_done",
-        title: "Done (Can drop item only in working)",
-        class: "success",
-        dragTo: ["_working"],
-        item: [
-          {
-            title: "All right"
-          },
-          {
-            title: "Ok!"
-          }
-        ]
-      }
-    ]
+  
   });
 
-  var toDoButton = document.getElementById("addToDo");
-  toDoButton.addEventListener("click", function() {
-    KanbanTest.addElement("_todo", {
-      title: "Test Add"
-    });
-  });
+fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
+  .then((resp)=>resp.json())
+  .then(function(colonneData){
+    colonneData.forEach(item => {
+      KanbanTest.addBoards([
+        {
+          id: item.titre_colonne,
+          title: item.titre_colonne,
+          'titre':item.titre_colonne,
+          class:"info",
+        }
+      ]);
+    })
+  
+  })
 
-  var toDoButtonAtPosition = document.getElementById("addToDoAtPosition");
-  toDoButtonAtPosition.addEventListener("click", function() {
-    KanbanTest.addElement("_todo", {
-      title: "Test Add at Pos"
-    }, 1);
-  });
+  fetch('http://127.0.0.1:8000/kanban/api/taches/')
+  .then((resp)=>resp.json())
+  .then(function(tachesData){  
+    // console.log(tachesData)
+    tachesData.forEach(item => {
+    KanbanTest.addElement(item.titre_colonne, {
+      title: item.titre_tache,
+      'id': item.id_tache,
+      'titre':item.titre_tache,
+    }, item.ordre);
+   })
+    console.log(KanbanTest)
+    console.log(KanbanTest.boardContainer[0].parentElement.attributes[0].nodeValue)
+  //  console.log(KanbanTest)
+  })
+
 
   var addBoardDefault = document.getElementById("addDefault");
   addBoardDefault.addEventListener("click", function() {
     KanbanTest.addBoards([
       {
         id: "_default",
-        title: "Kanban Default",
-        item: [
-          {
-            title: "Default Item"
-          },
-          {
-            title: "Default Item 2"
-          },
-          {
-            title: "Default Item 3"
-          }
-        ]
+        title: "TEST",
+        class:"error",
       }
     ]);
   });
 
-  var removeBoard = document.getElementById("removeBoard");
-  removeBoard.addEventListener("click", function() {
-    KanbanTest.removeBoard("_done");
-  });
+  var addTache= document.getElementById("addTache");
+  addTache.addEventListener('click', function(){
+    KanbanTest.addElement("TO DO",{title:"Nouvelle Tâche"})
+    fetch('http://127.0.0.1:8000/kanban/api/createTaches/')
+  })
+ 
+}
 
-  var removeElement = document.getElementById("removeElement");
-  removeElement.addEventListener("click", function() {
-    KanbanTest.removeElement("_test_delete");
-  });
 
-  var allEle = KanbanTest.getBoardElements("_todo");
-  allEle.forEach(function(item, index) {
-    //console.log(item);
-  });
+  //var removeBoard = document.getElementById("removeBoard");
+  //removeBoard.addEventListener("click", function() {
+  //  KanbanTest.removeBoard("_done");
+  //});
+
+  //var removeElement = document.getElementById("removeElement");
+  //removeElement.addEventListener("click", function() {
+  //  KanbanTest.removeElement("_test_delete");
+  //});
+
+  // var allEle = KanbanTest.getBoardElements("_todo");
+  // allEle.forEach(function(item, index) {
+  //   console.log(item,index);
+  // });
+
+ 
+  // console.log(KanbanTest.boardContainer.length)
+

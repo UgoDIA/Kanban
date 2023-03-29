@@ -11,4 +11,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('api/taches/', views.getTaches, name="taches"),
     path('api/colonnes/', views.getColonnes, name="colonnes"),
+    path('api/createColonne/', views.createColonne, name="createColonne"),
+    path('api/createTaches/', views.createTache, name="createTache"),
 ]
