@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'kanban.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'kb2', 
+        'NAME': 'kb', 
         'USER': 'postgres',
         'PASSWORD': '0000',
         'HOST': '127.0.0.1', 

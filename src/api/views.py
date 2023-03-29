@@ -16,4 +16,4 @@ def getTaches(request):
 def getColonnes(request):
     colonnes=Colonne.objects.all()
     serializer=ColonneSerializer(colonnes, many=True)
-    return Response(serializer.data) 
+    return Response(serializer.data)
