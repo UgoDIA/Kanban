@@ -1,3 +1,21 @@
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
 buildKanban()
 function buildKanban(){
   
@@ -25,7 +43,6 @@ var KanbanTest = new jKanban({
         const dataId = board.getAttribute('data-id');
         disco.push({ titre_colonne: dataId, ordre: index + 1 });
       });
-
       // console.log(disco);
       disco.forEach(col=>{
         fetch(`http://127.0.0.1:8000/kanban/api/colonneOrder/${col.titre_colonne}/`,{
@@ -44,7 +61,14 @@ var KanbanTest = new jKanban({
     dropEl: function(el, target, source, sibling){
       console.log("drop",el.getAttribute('data-titre'));
       console.log(target.parentElement.getAttribute('data-id'),"colonne:",target.parentElement.getAttribute('data-order'))
-      // console.log(el, target, source, sibling)
+      console.log(target.parentElement)
+      const ordreTache = document.querySelectorAll('.kanban-drag');
+      const dicta = [];
+      ordreTache.forEach((tache, index) => {
+        const dataId = tache.getAttribute('data-titre');
+        dicta.push({ titre_tache: dataId, ordre: index + 1 });
+      });
+      console.log(dicta)
     },
     // dragEl: function(el, target, source, sibling){
     //   console.log("drag",el.getAttribute('data-titre'));
@@ -54,30 +78,13 @@ var KanbanTest = new jKanban({
     buttonClick: function(el, boardId) {
       console.log(el);
       console.log(boardId);
-      // create a form to enter element
-      var formItem = document.createElement("form");
-      formItem.setAttribute("class", "itemform");
-      formItem.innerHTML =
-        '<div class="form-group"><textarea class="form-control" rows="2" autofocus></textarea></div><div class="form-group"><button type="submit" class="btn btn-primary btn-xs pull-right">Submit</button><button type="button" id="CancelBtn" class="btn btn-default btn-xs pull-right">Cancel</button></div>';
-
-      KanbanTest.addForm(boardId, formItem);
-      formItem.addEventListener("submit", function(e) {
-        e.preventDefault();
-        var text = e.target[0].value;
-        KanbanTest.addElement(boardId, {
-          title: text
-        });
-        formItem.parentNode.removeChild(formItem);
-      });
-      document.getElementById("CancelBtn").onclick = function() {
-        formItem.parentNode.removeChild(formItem);
-      };
+    
     },
     itemAddOptions: {
-      enabled: false,
-      content: '+ Ajouter une tâche',
+      enabled: true,
+      content: 'Editer',
       class: 'custom-button',
-      footer: true
+      footer: false
     },
   
   });
@@ -114,17 +121,6 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
   //  console.log(KanbanTest)
   })
 
-
-  // var addBoardDefault = document.getElementById("addDefault");
-  // addBoardDefault.addEventListener("click", function() {
-  //   KanbanTest.addBoards([
-  //     {
-  //       id: "test",
-  //       title: "TEST",
-  //       class:"error",
-  //     }
-  //   ]);
-  // });
   
   var addTache= document.getElementById("addTache");
   addTache.addEventListener('click', function(){
@@ -161,74 +157,63 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
 
   var addColonne= document.getElementById("addColonne");
   addColonne.addEventListener('click', function(){
+    openPopup();
+  })
 
+  const formColonne =document.getElementById("formColonne");
+const submitButton = document.getElementById('submit');
+
+formColonne.addEventListener("input", updatesubmitButton);
+
+function updatesubmitButton() {
+if (formColonne.value.length == 0) {
+     submitButton.disabled = true; 
+} else {
+     submitButton.disabled = false;
+}
+}
+
+
+submitButton.addEventListener("click", function(){
+  console.log(formColonne.value)
+  closePopup()
   fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
-    .then((resp)=>resp.json())
-    .then(function(colonneCount){
-      count=colonneCount.length
+  .then((resp)=>resp.json())
+  .then(function(colonneCount){
+    count=colonneCount.length
 
-      KanbanTest.addBoards([
-        {
-          id: "Nouvelle Colonne",
-          title: "Nouvelle Colonne",
-          'titre':"Nouvelle Colonne",
-          class:"info",
-        }
-      ]);
-
-      fetch('http://127.0.0.1:8000/kanban/api/createColonne/',{
-        method:'POST',
-        headers:{
-          'content-type':'application/json',
-          'X-CSRFToken':csrftoken,
-        },
-        body:JSON.stringify({
-          "titre_colonne": "Nouvelle Colonneq",
-          "ordre": count+1,
-      })
-      })
-  })
-
-
-  })
- 
-}
-
-
-  //var removeBoard = document.getElementById("removeBoard");
-  //removeBoard.addEventListener("click", function() {
-  //  KanbanTest.removeBoard("_done");
-  //});
-
-  //var removeElement = document.getElementById("removeElement");
-  //removeElement.addEventListener("click", function() {
-  //  KanbanTest.removeElement("_test_delete");
-  //});
-
-  // var allEle = KanbanTest.getBoardElements("_todo");
-  // allEle.forEach(function(item, index) {
-  //   console.log(item,index);
-  // });
-
- 
-  // console.log(KanbanTest.boardContainer.length)
-
-
-
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
+    KanbanTest.addBoards([
+      {
+        id: formColonne.value,
+        title: formColonne.value,
+        'titre':formColonne.value,
+        class:"info",
       }
-  }
-  return cookieValue;
+    ]);
+
+    fetch('http://127.0.0.1:8000/kanban/api/createColonne/',{
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'X-CSRFToken':csrftoken,
+      },
+      body:JSON.stringify({
+        "titre_colonne": formColonne.value,
+        "ordre": count+1,
+    })
+    })
+})
+})
+
 }
 
-const csrftoken = getCookie('csrftoken');
+
+let popupbg = document.getElementById("popupbg");
+function openPopup(){
+  document.getElementById("popupbg").style.visibility="visible"
+}
+function closePopup(){
+  document.getElementById("popupbg").style.visibility="hidden"
+}
+
+

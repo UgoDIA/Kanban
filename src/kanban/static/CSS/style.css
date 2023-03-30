@@ -28,11 +28,44 @@ body {
   .custom-button {
     background-color: #4CAF50;
     border: none;
-    color: white;
-    padding: 7px 15px;
-    margin: 10px;
+    color: white; 
+    margin-left:10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
   }      
+
+
+  
+.popup{
+  width: 600px;
+  background: #ffb82b;
+  position: absolute;
+  display: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  padding: 0 30px 30px;
+  color: #fbac0e;
+  margin: auto;
+  border:solid 8px #2b2b2b; 
+  border-radius: 20px;
+  
+}
+
+.open-popup{
+  visibility: visible;
+}
+
+.popupbg{
+  background-color: rgba(0,0,0,0.5);
+  top:0;
+  left:0;
+  z-index: 100;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  visibility: hidden;
+}

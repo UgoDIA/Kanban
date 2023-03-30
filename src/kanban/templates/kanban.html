@@ -14,5 +14,17 @@
 
 
     <div id="kt_docs_jkanban_basic"></div>
+    <div class="popupbg" id='popupbg'>
+  
+        <div class="popup" id='popup' >
+            <button type="button" style="position:absolute;top:5px;right:5px; font-size:25px" class="btn-close" onclick="closePopup()" aria-label="Close"></button>
+            <h2 style='color:black;'>Nom de la nouvelle colonne</h2>
+            <form >  
+                <input style="text-align:center"id="formColonne"class="form-control form-control-lg" type="text" >
+                <input disabled class="btn btn-dark" style="font-size:24px;margin-top: 4%" type="button" value="Valider" id='submit' >
+            </form>
+          
+        </div>
+    </div>
     <script src="{%static "JS/main.js" %}"></script>
 {% endblock %}
