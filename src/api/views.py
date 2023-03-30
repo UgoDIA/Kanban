@@ -47,3 +47,9 @@ def colonneOrder(request,pk):
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
+
+@api_view(['GET'])
+def colonneDetails(request,pk):
+    colonne=Colonne.objects.get(titre_colonne=pk)
+    serializer=ColonneSerializer(colonne, many=False)
+    return Response(serializer.data)    

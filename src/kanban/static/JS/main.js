@@ -19,18 +19,26 @@ var KanbanTest = new jKanban({
     dragendBoard: function(el, target, source, sibling){
       console.log("Drop Board:")
       console.log(el.getAttribute('data-id'),"position:",el.getAttribute('data-order'))
-      IDCol=el.getAttribute('data-id')
-      position=el.getAttribute('data-order')
-      fetch(`http://127.0.0.1:8000/kanban/api/colonneOrder/${IDCol}/`,{
-        method:'POST',
-        headers:{
-          'content-type':'application/json',
-          'X-CSRFToken':csrftoken,
-        },
-        body:JSON.stringify({
-          "titre_colonne": IDCol,
-          "ordre": position
-      })
+      const boards = document.querySelectorAll('.kanban-board');
+      const disco = [];
+      boards.forEach((board, index) => {
+        const dataId = board.getAttribute('data-id');
+        disco.push({ titre_colonne: dataId, ordre: index + 1 });
+      });
+
+      // console.log(disco);
+      disco.forEach(col=>{
+        fetch(`http://127.0.0.1:8000/kanban/api/colonneOrder/${col.titre_colonne}/`,{
+          method:'POST',
+          headers:{
+            'content-type':'application/json',
+            'X-CSRFToken':csrftoken,
+          },
+          body:JSON.stringify({
+            "titre_colonne": col.titre_colonne,
+            "ordre": col.ordre
+        })
+        })
       })
     },
     dropEl: function(el, target, source, sibling){
@@ -107,16 +115,16 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
   })
 
 
-  var addBoardDefault = document.getElementById("addDefault");
-  addBoardDefault.addEventListener("click", function() {
-    KanbanTest.addBoards([
-      {
-        id: "test",
-        title: "TEST",
-        class:"error",
-      }
-    ]);
-  });
+  // var addBoardDefault = document.getElementById("addDefault");
+  // addBoardDefault.addEventListener("click", function() {
+  //   KanbanTest.addBoards([
+  //     {
+  //       id: "test",
+  //       title: "TEST",
+  //       class:"error",
+  //     }
+  //   ]);
+  // });
   
   var addTache= document.getElementById("addTache");
   addTache.addEventListener('click', function(){
@@ -175,7 +183,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
           'X-CSRFToken':csrftoken,
         },
         body:JSON.stringify({
-          "titre_colonne": "Nouvelle Colonne",
+          "titre_colonne": "Nouvelle Colonneq",
           "ordre": count+1,
       })
       })
