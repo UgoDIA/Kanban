@@ -13,4 +13,6 @@ urlpatterns = [
     path('api/colonnes/', views.getColonnes, name="colonnes"),
     path('api/createColonne/', views.createColonne, name="createColonne"),
     path('api/createTaches/', views.createTache, name="createTache"),
+    path('api/createColonne/', views.createColonne, name="createColonne"),
+    path('api/colonneOrder/<str:pk>/', views.colonneOrder, name="colonneOrder"),
 ]

@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from  kanban.models import Taches, Colonne
 from .serializers import TachesSerializer,ColonneSerializer,createTachesSerializer
 from django.db import connection
+from django.db.models import Count,Max
 # Create your views here.
 
 @api_view(['GET'])
@@ -28,6 +29,21 @@ def createColonne(request):
 @api_view(['POST'])
 def createTache(request):
     serializer=createTachesSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def createColonne(request):
+    serializer=ColonneSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def colonneOrder(request,pk):
+    col=Colonne.objects.get(titre_colonne=pk)
+    serializer=ColonneSerializer(instance=col,data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
