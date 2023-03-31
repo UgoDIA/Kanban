@@ -61,14 +61,33 @@ var KanbanTest = new jKanban({
     dropEl: function(el, target, source, sibling){
       console.log("drop",el.getAttribute('data-titre'));
       console.log(target.parentElement.getAttribute('data-id'),"colonne:",target.parentElement.getAttribute('data-order'))
-      console.log(target.parentElement)
-      const ordreTache = document.querySelectorAll('.kanban-drag');
+      console.log(el.parentElement)
+      const IDCol=target.parentElement.getAttribute('data-id')
+      const colDiv = document.querySelector(`div[data-id="${IDCol}"]`);
+      const ordreTache = colDiv.querySelectorAll("div[data-eid]");
       const dicta = [];
       ordreTache.forEach((tache, index) => {
-        const dataId = tache.getAttribute('data-titre');
-        dicta.push({ titre_tache: dataId, ordre: index + 1 });
+        const dataId = tache.getAttribute('data-eid');
+        const dataTitre=tache.getAttribute('data-titre')
+        dicta.push({ id_tache: dataId, ordre: index + 1, data_titre:dataTitre });
       });
-      console.log(dicta)
+      // console.log(dicta)
+
+      dicta.forEach(tache=>{
+        fetch(`http://127.0.0.1:8000/kanban/api/tacheOrder/${tache.id_tache}/`,{
+          method:'POST',
+          headers:{
+            'content-type':'application/json',
+            'X-CSRFToken':csrftoken,
+          },
+          body:JSON.stringify({
+            "id_tache": tache.id_tache,
+            "titre_tache": tache.data_titre,
+            "ordre": tache.ordre,
+            "titre_colonne": IDCol,
+        })
+        })
+      })
     },
     // dragEl: function(el, target, source, sibling){
     //   console.log("drag",el.getAttribute('data-titre'));
@@ -116,10 +135,10 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
       'titre':item.titre_tache,
     }, item.ordre);
    })
-    // console.log(KanbanTest)
-    // console.log(KanbanTest.boardContainer[0].parentElement.attributes[0].nodeValue)
-  //  console.log(KanbanTest)
+  
   })
+  .catch(error => console.log("Erreur : " + error));
+  
 
   
   var addTache= document.getElementById("addTache");
@@ -152,6 +171,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
       })
       })
     })
+    .catch(error => console.log("Erreur : " + error));
 
   })
 

@@ -53,3 +53,11 @@ def colonneDetails(request,pk):
     colonne=Colonne.objects.get(titre_colonne=pk)
     serializer=ColonneSerializer(colonne, many=False)
     return Response(serializer.data)    
+
+@api_view(['POST'])
+def tacheOrder(request,pk):
+    tache=Taches.objects.get(id_tache=pk)
+    serializer=TachesSerializer(instance=tache,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)

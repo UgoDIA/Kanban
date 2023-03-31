@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/createColonne/', views.createColonne, name="createColonne"),
     path('api/createTaches/', views.createTache, name="createTache"),
     path('api/colonneOrder/<str:pk>/', views.colonneOrder, name="colonneOrder"),
+    path('api/tacheOrder/<str:pk>/', views.tacheOrder, name="tacheOrder"),
 ]
