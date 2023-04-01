@@ -25,7 +25,7 @@ function buildKanban(){
 var KanbanTest = new jKanban({
     element: "#myKanban",
     gutter: "10px",
-    widthBoard: "350px",
+    widthBoard: "350px",  
 
     click: function(el) {
       console.log("Trigger on all items click!");
@@ -33,10 +33,10 @@ var KanbanTest = new jKanban({
     context: function(el, e) {
       console.log("Trigger on all items right-click!");
     },
-    // dragBoard: function(el, source){
-    //   console.log("Drag Board:")
-    //   console.log(el.getAttribute('data-id'),"position:",el.getAttribute('data-order'))
-    // },
+    dragBoard: function(el, source){
+      console.log("Drag Board:")
+      console.log(el.getAttribute('data-id'),"position:",el.getAttribute('data-order'))
+    },
     dragendBoard: function(el, target, source, sibling){
       console.log("Drop Board:")
       console.log(el.getAttribute('data-id'),"position:",el.getAttribute('data-order'))
@@ -55,8 +55,9 @@ var KanbanTest = new jKanban({
             'X-CSRFToken':csrftoken,
           },
           body:JSON.stringify({
-            "titre_colonne": col.titre_colonne,
-            "ordre": col.ordre
+            "id_colonne": col.titre_colonne,
+            "titre_colonne": 'test',
+            "ordre": col.ordre,
         })
         })
       })
@@ -92,11 +93,11 @@ var KanbanTest = new jKanban({
         })
       })
     },
-    // dragEl: function(el, target, source, sibling){
-    //   console.log("drag",el.getAttribute('data-titre'));
-    //   console.log(target.parentElement.getAttribute('data-id'),"colonne:",target.parentElement.getAttribute('data-order'))
-    //   console.log(target)
-    // },
+    dragEl: function(el, target, source, sibling){
+      console.log("drag",el.getAttribute('data-titre'));
+      console.log(target.parentElement.getAttribute('data-id'),"colonne:",target.parentElement.getAttribute('data-order'))
+      console.log(target)
+    },
     buttonClick: function(el, boardId) {
       console.log(el.parentElement);
       console.log(boardId);
@@ -165,7 +166,7 @@ var KanbanTest = new jKanban({
     
     },
     itemAddOptions: {
-      enabled: true,
+      enabled: false,
       content: 'Editer',
       class: 'custom-button',
       footer: false
@@ -179,11 +180,9 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     colonneData.forEach(item => {
       KanbanTest.addBoards([
         {
-          id: item.id_colonne,
-          title: item.titre_colonne,
-          'id':item.id_colonne,
-          'titre':item.titre_colonne,
-          class:"info",
+          'id': item.id_colonne,
+          'title': item.titre_colonne,
+          'class':"info",
         }
       ]);
     })
@@ -193,11 +192,10 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     .then(function(tachesData){  
       // console.log(tachesData)
       tachesData.forEach(item => {
-      KanbanTest.addElement(item.id_colonne, {
-        title: item.titre_tache +"<button type=\"button\">Modifier</button></div>",
-        'id': item.id_tache,
-        'titre':item.titre_tache ,
-      }, item.ordre);
+      KanbanTest.addElement(1,{
+        "id"    : "item-id-2",
+        "title" : "Item 2"
+      });
      })
     
     })
