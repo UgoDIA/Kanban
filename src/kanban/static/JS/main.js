@@ -180,7 +180,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     colonneData.forEach(item => {
       KanbanTest.addBoards([
         {
-          'id': item.id_colonne,
+          'id': "board"+item.id_colonne,
           'title': item.titre_colonne,
           'class':"info",
         }
@@ -192,14 +192,15 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     .then(function(tachesData){  
       // console.log(tachesData)
       tachesData.forEach(item => {
-      KanbanTest.addElement(1,{
-        "id"    : "item-id-2",
-        "title" : "Item 2"
+      KanbanTest.addElement("board"+item.id_colonne,{
+        "id"    : item.id_tache,
+        "title" : item.titre_tache,
+        "titre" : item.titre_tache,
       });
      })
     
     })
-    .catch(error => console.log("Erreur : " + error));
+  
 
   })
 
