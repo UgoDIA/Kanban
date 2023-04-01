@@ -179,8 +179,9 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     colonneData.forEach(item => {
       KanbanTest.addBoards([
         {
-          id: item.titre_colonne,
+          id: item.id_colonne,
           title: item.titre_colonne,
+          'id':item.id_colonne,
           'titre':item.titre_colonne,
           class:"info",
         }
@@ -192,7 +193,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     .then(function(tachesData){  
       // console.log(tachesData)
       tachesData.forEach(item => {
-      KanbanTest.addElement(item.titre_colonne, {
+      KanbanTest.addElement(item.id_colonne, {
         title: item.titre_tache +"<button type=\"button\">Modifier</button></div>",
         'id': item.id_tache,
         'titre':item.titre_tache ,

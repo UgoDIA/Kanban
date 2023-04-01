@@ -14,4 +14,4 @@ class ColonneSerializer(serializers.ModelSerializer):
 class createTachesSerializer(serializers.ModelSerializer):
     class Meta:
         model=Taches
-        fields=['titre_tache','ordre','titre_colonne']     
+        fields=['titre_tache','ordre','id_colonne']     

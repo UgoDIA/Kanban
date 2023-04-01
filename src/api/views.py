@@ -47,16 +47,16 @@ def CR_colonnes(request):
 @api_view(['GET','POST','DELETE'])
 def RUD_colonnes(request,pk):
     if request.method=='GET':
-        colonne=Colonne.objects.get(titre_colonne=pk)
+        colonne=Colonne.objects.get(id_colonne=pk)
         serializer=ColonneSerializer(colonne, many=False)
         return Response(serializer.data)    
     elif request.method=='POST':
-        col=Colonne.objects.get(titre_colonne=pk)
+        col=Colonne.objects.get(id_colonne=pk)
         serializer=ColonneSerializer(instance=col,data=request.data)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)
     elif request.method=='DELETE':
-        col=Colonne.objects.get(titre_colonne=pk)
+        col=Colonne.objects.get(id_colonne=pk)
         col.delete()
         return Response("Ligne supprimée")
