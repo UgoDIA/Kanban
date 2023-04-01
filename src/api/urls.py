@@ -9,11 +9,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('api/taches/', views.getTaches, name="taches"),
-    path('api/colonnes/', views.getColonnes, name="colonnes"),
-    path('api/colonnes/<str:pk>/', views.colonneDetails, name="colonneDet"),
-    path('api/createColonne/', views.createColonne, name="createColonne"),
-    path('api/createTaches/', views.createTache, name="createTache"),
-    path('api/colonneOrder/<str:pk>/', views.colonneOrder, name="colonneOrder"),
-    path('api/tacheOrder/<str:pk>/', views.tacheOrder, name="tacheOrder"),
+    path('api/taches/', views.CR_taches, name="getTaches"),
+    path('api/taches/<str:pk>/', views.RUD_taches, name="taches"),
+    path('api/colonnes/', views.CR_colonnes, name="getColonnes"),
+    path('api/colonnes/<str:pk>/', views.RUD_colonnes, name="colonnes"),
 ]

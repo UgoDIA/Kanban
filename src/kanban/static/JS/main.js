@@ -16,9 +16,12 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-buildKanban()
-function buildKanban(){
-  
+window.onload = function() {
+  buildKanban()
+};
+
+
+function buildKanban(){  
 var KanbanTest = new jKanban({
     element: "#myKanban",
     gutter: "10px",
@@ -45,7 +48,7 @@ var KanbanTest = new jKanban({
       });
       // console.log(disco);
       disco.forEach(col=>{
-        fetch(`http://127.0.0.1:8000/kanban/api/colonneOrder/${col.titre_colonne}/`,{
+        fetch(`http://127.0.0.1:8000/kanban/api/colonnes/${col.titre_colonne}/`,{
           method:'POST',
           headers:{
             'content-type':'application/json',
@@ -74,7 +77,7 @@ var KanbanTest = new jKanban({
       // console.log(dicta)
 
       dicta.forEach(tache=>{
-        fetch(`http://127.0.0.1:8000/kanban/api/tacheOrder/${tache.id_tache}/`,{
+        fetch(`http://127.0.0.1:8000/kanban/api/taches/${tache.id_tache}/`,{
           method:'POST',
           headers:{
             'content-type':'application/json',
@@ -95,8 +98,70 @@ var KanbanTest = new jKanban({
     //   console.log(target)
     // },
     buttonClick: function(el, boardId) {
-      console.log(el);
+      console.log(el.parentElement);
       console.log(boardId);
+      const mainDiv=document.querySelector(`div[data-id='${boardId}']`)
+      const titreDiv= mainDiv.querySelector('.kanban-title-board')
+      const titre=titreDiv.innerHTML
+      console.log(titre)
+      openPopup()
+      document.getElementById("titre_form").innerHTML ="Modifier le nom de la colonne"
+      formColonne.placeholder=titre
+      
+      submitButton.addEventListener("click", function(){
+      console.log(formColonne.value)
+      formValue=formColonne.value
+      closePopup()
+      
+      const ordre=mainDiv.getAttribute('data-order')
+      const titreBoard= mainDiv.querySelector('.kanban-title-board')
+      titreBoard.innerHTML =formValue
+      const listeTache = mainDiv.querySelectorAll("div[data-eid]");
+      const dicta = [];
+      listeTache.forEach((tache, index) => {
+        const dataId = tache.getAttribute('data-eid');
+        const dataTitre=tache.getAttribute('data-titre')
+        dicta.push({ id_tache: dataId, ordre: index + 1, data_titre:dataTitre });
+      });
+      // console.log(dicta)
+      
+      fetch(`http://127.0.0.1:8000/kanban/api/colonnes/`,{
+        method:'POST',
+        headers:{
+          'content-type':'application/json',
+          'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({
+          "titre_colonne": formValue,
+          "ordre": ordre,
+        })
+      }).then(function(){
+        dicta.forEach(tache=>{
+          fetch(`http://127.0.0.1:8000/kanban/api/taches/${tache.id_tache}/`,{
+            method:'POST',
+            headers:{
+              'content-type':'application/json',
+              'X-CSRFToken':csrftoken,
+            },
+            body:JSON.stringify({
+              "id_tache": tache.id_tache,
+              "titre_tache": tache.data_titre,
+              "ordre": tache.ordre,
+              "titre_colonne": formValue,
+            })
+          })
+        })
+      }).then(function(){
+        fetch(`http://127.0.0.1:8000/kanban/api/colonnes/${titre}/`, {
+          method:'DELETE', 
+          headers:{
+              'Content-type':'application/json',
+              'X-CSRFToken':csrftoken,
+          }
+        })
+      })
+
+    })
     
     },
     itemAddOptions: {
@@ -122,43 +187,44 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
       ]);
     })
   
+    fetch('http://127.0.0.1:8000/kanban/api/taches/')
+    .then((resp)=>resp.json())
+    .then(function(tachesData){  
+      // console.log(tachesData)
+      tachesData.forEach(item => {
+      KanbanTest.addElement(item.titre_colonne, {
+        title: item.titre_tache +"<button type=\"button\">Modifier</button></div>",
+        'id': item.id_tache,
+        'titre':item.titre_tache ,
+      }, item.ordre);
+     })
+    
+    })
+    .catch(error => console.log("Erreur : " + error));
+
   })
 
-  fetch('http://127.0.0.1:8000/kanban/api/taches/')
-  .then((resp)=>resp.json())
-  .then(function(tachesData){  
-    // console.log(tachesData)
-    tachesData.forEach(item => {
-    KanbanTest.addElement(item.titre_colonne, {
-      title: item.titre_tache,
-      'id': item.id_tache,
-      'titre':item.titre_tache,
-    }, item.ordre);
-   })
-  
-  })
-  .catch(error => console.log("Erreur : " + error));
-  
 
+  
   
   var addTache= document.getElementById("addTache");
   addTache.addEventListener('click', function(){
   
     fetch('http://127.0.0.1:8000/kanban/api/taches/')
     .then((resp)=>resp.json())
-    .then(function(tachesCount){
+    .then(function(taches){
       let count = 0;
-    for (let i = 0; i < tachesCount.length; i++) {
-      if (tachesCount[i].titre_colonne === "TO DO") {
+    for (let i = 0; i < taches.length; i++) {
+      if (taches[i].titre_colonne === "TO DO") {
         count++;
       }
     }
       KanbanTest.addElement("TO DO",{
         title:"Nouvelle Tâche",
-        'id': tachesCount.length+1,
+        'id': taches.length+1,
         'titre':"Nouvelle Tâche",
       },count)
-      fetch('http://127.0.0.1:8000/kanban/api/createTaches/',{
+      fetch('http://127.0.0.1:8000/kanban/api/taches/',{
         method:'POST',
         headers:{
           'content-type':'application/json',
@@ -178,52 +244,55 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
   var addColonne= document.getElementById("addColonne");
   addColonne.addEventListener('click', function(){
     openPopup();
+    document.getElementById("titre_form").innerHTML ="Nom de la nouvelle colonne"
+    submitButton.addEventListener("click", function(){
+      console.log(formColonne.value)
+      closePopup()
+      fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
+      .then((resp)=>resp.json())
+      .then(function(colonneCount){
+        count=colonneCount.length
+    
+        KanbanTest.addBoards([
+          {
+            id: formColonne.value,
+            title: formColonne.value,
+            'titre':formColonne.value,
+            class:"info",
+          }
+        ]);
+    
+        fetch('http://127.0.0.1:8000/kanban/api/colonnes/',{
+          method:'POST',
+          headers:{
+            'content-type':'application/json',
+            'X-CSRFToken':csrftoken,
+          },
+          body:JSON.stringify({
+            "titre_colonne": formColonne.value,
+            "ordre": count+1,
+        })
+        })
+    })
+    })
   })
 
-  const formColonne =document.getElementById("formColonne");
+const formColonne =document.getElementById("formColonne");
 const submitButton = document.getElementById('submit');
 
-formColonne.addEventListener("input", updatesubmitButton);
+formColonne.addEventListener("input", updateSubmitButton);
 
-function updatesubmitButton() {
-if (formColonne.value.length == 0) {
-     submitButton.disabled = true; 
-} else {
-     submitButton.disabled = false;
+function updateSubmitButton() {
+const inputValue = formColonne.value.trim();
+  if (inputValue.length == 0) {
+      submitButton.disabled = true; 
+  } else {
+      submitButton.disabled = false;
+  }
 }
-}
 
 
-submitButton.addEventListener("click", function(){
-  console.log(formColonne.value)
-  closePopup()
-  fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
-  .then((resp)=>resp.json())
-  .then(function(colonneCount){
-    count=colonneCount.length
 
-    KanbanTest.addBoards([
-      {
-        id: formColonne.value,
-        title: formColonne.value,
-        'titre':formColonne.value,
-        class:"info",
-      }
-    ]);
-
-    fetch('http://127.0.0.1:8000/kanban/api/createColonne/',{
-      method:'POST',
-      headers:{
-        'content-type':'application/json',
-        'X-CSRFToken':csrftoken,
-      },
-      body:JSON.stringify({
-        "titre_colonne": formColonne.value,
-        "ordre": count+1,
-    })
-    })
-})
-})
 
 }
 
