@@ -24,8 +24,8 @@ window.onload = function() {
 function buildKanban(){  
 var KanbanTest = new jKanban({
     element: "#myKanban",
-    gutter: "10px",
-    widthBoard: "350px",  
+    gutter: "5px",
+    widthBoard: "300px",  
 
     // click: function(el) {
     //   console.log("Trigger on all items click!");
@@ -179,7 +179,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
       tachesData.forEach(item => {
       KanbanTest.addElement("board"+item.id_colonne,{
         "id"    : item.id_tache,
-        "title" : item.titre_tache+`<button id=\"editTache\" data-ID=${item.id_tache} type=\"button\">Modifier</button></div>`,
+        "title" : item.titre_tache+`<button id="editTache" data-ID=${item.id_tache} type="button"><i class="bi bi-pencil-square"></i></button>`,
         "titre" : item.titre_tache,
       });
      })
@@ -221,7 +221,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
     });
     console.log(taches.length)
       KanbanTest.addElement("board1",{
-        title:"Nouvelle Tâche"+`<button id=\"editTache\" data-ID=${maxId+1} type=\"button\">Modifier</button></div>`,
+        title:"Nouvelle Tâche"+`<button id="editTache" data-ID=${maxId+1} type="button"><i class="bi bi-pencil-square"></i></button>`,
         'id': maxId+1,
         'titre':"Nouvelle Tâche",
       },count)
@@ -323,7 +323,7 @@ function editTache(dataId){
       console.log(tacheData)
       const tacheTitre = document.querySelector(`div.kanban-item[data-eid="${dataId}"]`);
       if (tacheTitre) {
-        tacheTitre.innerHTML = formColonne.value+`<button id=\"editTache\" data-ID=${dataId} type=\"button\">Modifier</button></div>`;
+        tacheTitre.innerHTML = formColonne.value+`<button id="editTache" data-ID=${dataId} type="button"><i class="bi bi-pencil-square"></i></button>`;
         tacheTitre.setAttribute('data-titre', formColonne.value);
       }
       const button = tacheTitre.querySelector(`button[data-id="${dataId}"]`);

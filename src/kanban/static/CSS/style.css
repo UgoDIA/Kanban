@@ -2,6 +2,7 @@ body {
     font-family: "Lato";
     margin: 0;
     padding: 0;
+    background-color: #2a363e !important;
   }
 
   #myKanban {
@@ -9,24 +10,12 @@ body {
     padding: 20px 0;
   }
 
-  .success {
-    background: #00b961;
-  }
-
   .info {
-    background: #2a92bf;
-  }
-
-  .warning {
-    background: #f4ce46;
-  }
-
-  .error {
-    background: #fb7d44;
+    background: #efa91d;
   }
 
   .custom-button {
-    background-color: #4CAF50;
+    background-color: #000000;
     border: none;
     color: white; 
     margin-left:10px;
@@ -34,9 +23,16 @@ body {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    position: absolute;
+    border: 1px solid transparent;
+    border-radius: .75rem;
+    right:20px
   }      
-
-
+  .custom-button:hover{
+    background-color: #ffffff;
+    color: #000000;
+    transition: 1s;
+  }
   
 .popup{
   width: 600px;
@@ -68,4 +64,91 @@ body {
   width: 100%;
   position: fixed;
   visibility: hidden;
+}
+
+#editTache{
+  position:absolute;
+  right:30px;
+  border: 1px solid transparent;
+  border-radius: .75rem;
+  font-size: 30px;
+  margin-top: -13px;
+  color:white;
+  background-color: #000000;
+}
+
+#editTache:hover{
+  background-color: #424242;
+  transition: 0.5s;
+}
+
+.kanban-drag{
+  background-color: #a3a3a3;
+  border: 3px solid;
+  
+}
+
+.kanban-board{
+  background-color:transparent !important ;
+}
+
+.kanban-item{
+  background-color: #f6bd4b !important;
+  font-weight: bold;
+  border: 2px solid ;
+  border-radius: .75rem;
+}
+
+.kanban-item:hover {
+  background-color: #d39210 !important ; 
+  transition: 0.5s;
+}
+
+.kanban-board header{
+  border: 2px solid ;
+
+}
+
+#addColonne{
+  margin-top: 20px;
+  margin-left:20px ;
+  background-color: #000000;
+  border: 1px solid transparent;
+  border-radius: .75rem;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: .75rem 1.2rem;
+}
+
+#addColonne:hover {
+  background-color: #ffffff;
+  color: #000000;
+  transition: 1s;
+}
+
+#addTache{
+  margin-left:20px ;
+  background-color: #000000;
+  border: 1px solid transparent;
+  border-radius: .75rem;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: .75rem 1.2rem;
+  
+}
+
+#addTache:hover {
+  background-color: #ffffff;
+  color: #000000;
+  transition: 1s;
 }
