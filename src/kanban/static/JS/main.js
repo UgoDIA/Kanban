@@ -143,7 +143,9 @@ var KanbanTest = new jKanban({
           "titre_colonne": formValue,
           "ordre": ordre,
         })
-      })
+      }).then(() => {
+        formColonne.value = '';
+      });
 
     })
     
@@ -181,8 +183,9 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
         "titre" : item.titre_tache,
       });
      })
-    
-    }).then(function(){
+     
+    }).then(function(titreTache){
+      
       const editButtons = document.querySelectorAll("#editTache");
       editButtons.forEach(button => {
         button.addEventListener("click", () => {
@@ -284,7 +287,9 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
             "ordre": count+1,
         })
         })
-    })
+    }).then(() => {
+      formColonne.value = '';
+    });
     })
   })
 
@@ -308,15 +313,26 @@ function editTache(dataId){
   dataId=parseInt(dataId)
   openPopup()
   document.getElementById("titre_form").innerHTML ="Modifier le nom de la tâche"
-  submitButton.addEventListener("click", function(){
+  
+  function submitHandler() {
     console.log(formColonne.value)
     closePopup()
     fetch(`http://127.0.0.1:8000/kanban/api/taches/${dataId}/`)
     .then((resp)=>resp.json())
     .then(function(tacheData){
-      // KanbanTest.replaceElement(dataId[
-
-      // ])
+      console.log(tacheData)
+      const tacheTitre = document.querySelector(`div.kanban-item[data-eid="${dataId}"]`);
+      if (tacheTitre) {
+        tacheTitre.innerHTML = formColonne.value+`<button id=\"editTache\" data-ID=${dataId} type=\"button\">Modifier</button></div>`;
+        tacheTitre.setAttribute('data-titre', formColonne.value);
+      }
+      const button = tacheTitre.querySelector(`button[data-id="${dataId}"]`);
+      if (button) {
+        button.addEventListener('click', () => {
+          editTache(dataId)
+        });
+      }
+    
       fetch(`http://127.0.0.1:8000/kanban/api/taches/${dataId}/`,{
         method:'POST',
         headers:{
@@ -328,13 +344,18 @@ function editTache(dataId){
           "titre_tache": formColonne.value,
           "ordre": tacheData.ordre,
           "id_colonne": tacheData.id_colonne
-      })
-      })
-  })
-
-
-})
+        })
+      }).then(() => {
+          formColonne.value = '';
+        });
+    })
+    
+    submitButton.removeEventListener("click", submitHandler);
+  }
+  
+  submitButton.addEventListener("click", submitHandler);
 }
+
 
 }
 
