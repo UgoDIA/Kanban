@@ -11,7 +11,3 @@ class ColonneSerializer(serializers.ModelSerializer):
         model=Colonne
         fields='__all__'
         
-class createTachesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Taches
-        fields=['titre_tache','ordre','id_colonne']     

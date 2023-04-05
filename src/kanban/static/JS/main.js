@@ -232,6 +232,7 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
           'X-CSRFToken':csrftoken,
         },
         body:JSON.stringify({
+          "id_tache":maxId+1,
           "titre_tache": "Nouvelle Tâche",
           "ordre": count+1,
           "id_colonne": 1
@@ -267,9 +268,10 @@ fetch('http://127.0.0.1:8000/kanban/api/colonnes/')
             maxId = item.id_colonne;
           }
         });
+        let newId=maxId+1
         KanbanTest.addBoards([
           {
-            'id': "board"+maxId+1,
+            'id': "board"+newId,
             'title': formColonne.value,
             'class':"info",
           }

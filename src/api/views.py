@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from  kanban.models import Taches, Colonne
-from .serializers import TachesSerializer,ColonneSerializer,createTachesSerializer
+from .serializers import TachesSerializer,ColonneSerializer
 from django.db import connection
 from django.db.models import Count,Max
 # Create your views here.
@@ -13,7 +13,7 @@ def CR_taches(request):
         serializer=TachesSerializer(taches, many=True)
         return Response(serializer.data)
     elif request.method=='POST':
-        serializer=createTachesSerializer(data=request.data)
+        serializer=TachesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)
